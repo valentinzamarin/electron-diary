@@ -1,0 +1,14 @@
+{
+  "name": "electrondiary",
+  "version": "1.0.0",
+  "description": "This is my example of electron application",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Valentin Zamarin",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^35.0.1"
+  }
+}
