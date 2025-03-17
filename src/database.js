@@ -3,7 +3,6 @@ import path from 'path';
 
 const dbPath = path.join(process.cwd(), 'database.sqlite');
 
-
 export function initializeDatabase() {
     const db = new sqlite3.Database(dbPath, (err) => {
         if (err) {
@@ -15,7 +14,6 @@ export function initializeDatabase() {
     });
 }
 
-
 function createTables(db) {
     db.run(`
     CREATE TABLE IF NOT EXISTS posts (
@@ -25,21 +23,9 @@ function createTables(db) {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
-
-    db.run(`
-    CREATE TABLE IF NOT EXISTS tags (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      post_id INTEGER,
-      tag TEXT NOT NULL,
-      FOREIGN KEY (post_id) REFERENCES posts (id)
-    )
-  `);
-
-    console.log('Таблицы созданы или уже существуют.');
 }
 
-
-export async function addPost(title, content, tags) {
+export async function addPost(title, content) {
     return new Promise((resolve, reject) => {
         const db = new sqlite3.Database(dbPath);
         db.run(
@@ -49,10 +35,6 @@ export async function addPost(title, content, tags) {
                 if (err) {
                     reject(err);
                 } else {
-                    const postId = this.lastID;
-                    tags.forEach(tag => {
-                        db.run('INSERT INTO tags (post_id, tag) VALUES (?, ?)', [postId, tag]);
-                    });
                     resolve();
                 }
             }
@@ -60,24 +42,67 @@ export async function addPost(title, content, tags) {
     });
 }
 
-
 export async function loadPosts() {
     return new Promise((resolve, reject) => {
         const db = new sqlite3.Database(dbPath);
         db.all(
-            `SELECT posts.*, GROUP_CONCAT(tags.tag) as tags 
-       FROM posts 
-       LEFT JOIN tags ON posts.id = tags.post_id 
-       GROUP BY posts.id`,
+            `SELECT * FROM posts`,
             (err, rows) => {
                 if (err) {
                     reject(err);
                 } else {
-                    const posts = rows.map(row => ({
-                        ...row,
-                        tags: row.tags ? row.tags.split(',') : [],
-                    }));
-                    resolve(posts);
+                    resolve(rows);
+                }
+            }
+        );
+    });
+}
+
+export async function getPostById(postId) {
+    return new Promise((resolve, reject) => {
+        const db = new sqlite3.Database(dbPath);
+        db.get(
+            `SELECT * FROM posts WHERE id = ?`,
+            [postId],
+            (err, row) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(row || null);
+                }
+            }
+        );
+    });
+}
+
+export async function updatePost(postId, title, content) {
+    return new Promise((resolve, reject) => {
+        const db = new sqlite3.Database(dbPath);
+        db.run(
+            'UPDATE posts SET title = ?, content = ? WHERE id = ?',
+            [title, content, postId],
+            function (err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            }
+        );
+    });
+}
+
+export async function deletePost(postId) {
+    return new Promise((resolve, reject) => {
+        const db = new sqlite3.Database(dbPath);
+        db.run(
+            'DELETE FROM posts WHERE id = ?',
+            [postId],
+            function (err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
                 }
             }
         );

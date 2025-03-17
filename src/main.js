@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
-import { initializeDatabase, addPost, loadPosts } from './database.js';
+import { initializeDatabase, addPost, loadPosts, getPostById, updatePost, deletePost } from './database.js';
 
 
 initializeDatabase();
@@ -16,6 +16,7 @@ function createWindow() {
         },
     });
 
+    mainWindow.setMenuBarVisibility(false)
 
     if (process.env.NODE_ENV === 'development') {
         mainWindow.loadURL('http://localhost:5173');
@@ -25,12 +26,28 @@ function createWindow() {
 }
 
 
-ipcMain.handle('add-post', async (event, { title, content, tags }) => {
-    await addPost(title, content, tags);
+ipcMain.handle('add-post', async (event, { title, content }) => {
+    await addPost(title, content);
+
+
+    const allWindows = BrowserWindow.getAllWindows();
+    allWindows.forEach(win => {
+        win.webContents.send('post-added');
+    });
 });
 
 ipcMain.handle('load-posts', async () => {
     return await loadPosts();
+});
+
+ipcMain.handle('get-post-by-id', async (event, postId) => {
+    try {
+        const post = await getPostById(postId);
+        return post;
+    } catch (error) {
+        console.error('Ошибка при получении поста:', error);
+        throw error; // Передаем ошибку обратно в рендерер
+    }
 });
 
 app.whenReady().then(() => {
@@ -43,4 +60,40 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
+});
+
+
+
+ipcMain.handle('update-post', async (event, { postId, title, content }) => {
+    try {
+        await updatePost(postId, title, content);
+
+        // Уведомляем все окна об обновлении поста
+        const allWindows = BrowserWindow.getAllWindows();
+        allWindows.forEach(win => {
+            win.webContents.send('post-updated');
+        });
+
+        return true; // Успешно обновлено
+    } catch (error) {
+        console.error('Ошибка при обновлении поста:', error);
+        throw error;
+    }
+});
+
+ipcMain.handle('delete-post', async (event, postId) => {
+    try {
+        await deletePost(postId);
+
+        // Уведомляем все окна об удалении поста
+        const allWindows = BrowserWindow.getAllWindows();
+        allWindows.forEach(win => {
+            win.webContents.send('post-deleted');
+        });
+
+        return true; // Успешно удалено
+    } catch (error) {
+        console.error('Ошибка при удалении поста:', error);
+        throw error;
+    }
 });

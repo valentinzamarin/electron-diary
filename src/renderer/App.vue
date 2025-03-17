@@ -1,9 +1,29 @@
 <template>
-    <div id="app">
-      <div class="bg-blue-500 text-white p-4">
-        Tailwind CSS!
-      </div>
+  <div class="flex flex-row h-screen overflow-hidden">
+    <div class="flex flex-col w-1/4 border-r-[1px] border-slate-200">
+      <Aside />
     </div>
-  </template>
-  
-  
+
+    <div class="flex-1 overflow-y-auto no-scrollbar">
+      <router-view></router-view>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import Aside from './components/Aside.vue';
+</script>
+
+<style>
+input, textarea{
+  outline: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+</style>

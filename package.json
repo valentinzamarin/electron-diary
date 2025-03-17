@@ -14,12 +14,16 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
     "electron": "^35.0.1",
+    "electron-packager": "^17.1.2",
     "vite": "^6.2.2",
     "vite-plugin-electron": "^0.29.0",
     "vue": "^3.5.13"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.14",
-    "sqlite3": "^5.1.7"
+    "@tiptap/starter-kit": "^2.11.5",
+    "@tiptap/vue-3": "^2.11.5",
+    "sqlite3": "^5.1.7",
+    "vue-router": "^4.5.0"
   }
 }
