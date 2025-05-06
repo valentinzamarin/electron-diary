@@ -1,0 +1,32 @@
+{
+  "name": "electrondiary",
+  "version": "1.0.0",
+  "description": "This is my example of electron application",
+  "main": "src/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "start": "electron .",
+    "rebuild": "electron-rebuild -f -w",
+    "package": "npm run build && npm run rebuild && electron-packager . --overwrite --platform=win32 --arch=x64 --out=release"
+  },
+  "author": "Valentin Zamarin",
+  "license": "ISC",
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "electron": "^35.0.1",
+    "electron-packager": "^17.1.2",
+    "electron-rebuild": "^3.2.9",
+    "vite": "^6.2.2",
+    "vite-plugin-electron": "^0.29.0",
+    "vue": "^3.5.13"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.0.14",
+    "@tiptap/starter-kit": "^2.11.5",
+    "@tiptap/vue-3": "^2.11.5",
+    "sqlite3": "^5.1.7",
+    "vue-router": "^4.5.0"
+  }
+}
