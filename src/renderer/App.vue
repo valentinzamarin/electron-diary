@@ -15,18 +15,21 @@ import Aside from './components/Aside.vue';
 </script>
 
 <style>
-input, textarea{
+input,
+textarea {
   outline: none;
 }
+
 .no-scrollbar::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 .no-scrollbar {
-    -ms-overflow-style: none; 
-    scrollbar-width: none; 
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
-.post-page p{
+
+.post-page p {
   margin-bottom: 1rem;
 }
 </style>
